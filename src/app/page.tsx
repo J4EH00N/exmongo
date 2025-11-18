@@ -6,8 +6,6 @@ export default function Home() {
     <div>
       <h1 className="text-3xl font-bold">WebDev Topics</h1>{' '}
       <p className="mb-4">MongoDB CRUD Example</p>
-      <TopicsList />
-      <TopicsList />
       <TopicsList />{' '}
     </div>
   )
