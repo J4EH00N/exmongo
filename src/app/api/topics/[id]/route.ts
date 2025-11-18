@@ -4,10 +4,12 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  // 1. { params } 대신 context를 받고 타입을 Promise로 수정합니다.
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    // 2. context.params를 await 하여 실제 id를 추출합니다.
+    const { id } = await context.params
     const { newTitle: title, newDescription: description } =
       await request.json()
     if (!title || !description) {
@@ -40,12 +42,17 @@ export async function PUT(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  // 3. GET 함수도 동일하게 수정합니다.
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    // 4. GET 함수도 params를 await 합니다.
+    const { id } = await context.params
     await connectMongodb()
-    const topic = await Topic.findById({ _id: id })
+
+    // 참고: findById는 객체({ _id: id }) 대신 id 문자열만 전달하는 것이 일반적입니다.
+    const topic = await Topic.findById(id)
+
     if (!topic) {
       return NextResponse.json({ message: 'Topic not found' }, { status: 404 })
     }
